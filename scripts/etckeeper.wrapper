@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Export environment variable ETCKEEPER_CONF_DIR to use $SNAP/etc/etckeeper
+export ETCKEEPER_CONF_DIR=$SNAP_COMMON/etc/etckeeper
+
+exec "$SNAP/usr/bin/etckeeper" "$@"

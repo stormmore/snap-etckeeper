@@ -1,0 +1,75 @@
+#!/bin/bash
+
+CONF_FILE=$SNAP_COMMON/etc/etckeeper/etckeeper.conf
+
+# move $SNAP/etc/etckeeper to #SNAP_COMMON/etc/etckeeper
+if [ ! -d $SNAP_COMMON/etc/etckeeper ]; then
+    mkdir -p $SNAP_COMMON/etc/etckeeper
+    cp -r $SNAP/etc/etckeeper $SNAP_COMMON/etc/
+fi
+
+SED_EXPR=""
+
+CURRENT_VCS=$(awk -F= '/^VCS=/ { print $2 }' $CONF_FILE | sed 's/\"//g')
+VCS=$(snapctl get vcs)
+if [[ -z $VCS ]]; then
+    VCS=$CURRENT_VCS
+elif [[ $CURRENT_VCS != $VCS ]]; then
+    SED_EXPR="/^VCS=/ s/^/#/; /^#VCS=\\\"$VCS\\\"/ s/^#//; "
+fi
+
+VCS=$(eval echo $VCS | awk '{ print toupper($0)}')
+COMMIT_OPTIONS=$(snapctl get commit-options)
+if [[ ! -z $COMMIT_OPTIONS ]]; then
+    SED_EXPR=$SED_EXPR"/^"$VCS"_COMMIT_OPTIONS=/ s/^.*$/"$VCS"_COMMIT_OPTIONS=\\\""$COMMIT_OPTIONS"\\\"/;"
+fi
+
+AVOID_DAILY_AUTOCOMMITS=$(snapctl get avoid-daily-autocommits)
+if [[ ! -z $AVOID_DAILY_AUTOCOMMITS ]]; then
+    if "$AVOID_DAILY_AUTOCOMMITS" == "1"; then
+        SED_EXPR = $SED_EXPR"/^#AVOID_DAILY_AUTOCOMMITS=/ s/^#//;"
+    else
+        SED_EXPR = $SED_EXPR"/^#AVOID_DAILY_AUTOCOMMITS=/ s/^/#/;"
+
+    fi
+fi
+
+AVOID_SPECIAL_FILE_WARNING=$(snapctl get avoid-special-file-handling)
+if [[ ! -z $AVOID_SPECIAL_FILE_WARNING ]]; then
+    if "$AVOID_SPECIAL_FILE_WARNING" == "1"; then
+        SED_EXPR = $SED_EXPR"/^#AVOID_SPECIAL_FILE_WARNING=/ s/^#//;"
+    else
+        SED_EXPR = $SED_EXPR"/^#AVOID_SPECIAL_FILE_WARNING=/ s/^/#/;"
+
+    fi
+fi
+
+AVOID_COMMIT_BEFORE_INSTALL=$(snapctl get avoid-commit-before-install)
+if [[ ! -z $AVOID_COMMIT_BEFORE_INSTALL ]]; then
+    if "$AVOID_COMMIT_BEFORE_INSTALL" == "1"; then
+        SED_EXPR = $SED_EXPR"/^#AVOID_COMMIT_BEFORE_INSTALL=/ s/^#//;"
+    else
+        SED_EXPR = $SED_EXPR"/^#AVOID_COMMIT_BEFORE_INSTALL=/ s/^/#/;"
+
+    fi
+fi
+
+HIGHLEVEL_PACKAGE_MANAGER=$(snapctl get highlevel-package-manger)
+if [[ ! -z $HIGHLEVEL_PACKAGE_MANAGER ]]; then
+    SED_EXPR=$SED_EXPR"/^HIGHLEVEL_PACKAGE_MANAGER=/ s/^.*$/HIGHLEVEL_PACKAGE_MANAGER="$HIGHLEVEL_PACKAGE_MANAGER"/;"
+fi
+
+LOWLEVEL_PACKAGE_MANAGER=$(snapctl get lowlevel-package-manager)
+if [[ ! -z $LOWLEVEL_PACKAGE_MANAGER ]]; then
+    SED_EXPR=$SED_EXPR"/^LOWLEVEL_PACKAGE_MANAGER=/ s/^.*$/LOWLEVEL_PACKAGE_MANAGER="$LOWLEVEL_PACKAGE_MANAGER"/;"
+fi
+
+PUSH_REMOTE=$(snapctl get push-remote)
+if [[ ! -z $PUSH_REMOTE ]]; then
+    SED_EXPR=$SED_EXPR"/^PUSH_REMOTE=/ s/^.*$/PUSH_REMOTE=\\\""$PUSH_REMOTE"\\\"/;"
+fi
+
+BACKUP=$(snapctl get backup)
+if [[ ! -z $SED_EXPR ]]; then
+    sed -i$BACKUP -e "$SED_EXPR" $SNAP_COMMON/etc/etckeeper/etckeeper.conf
+fi

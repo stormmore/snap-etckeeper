@@ -23,11 +23,3 @@ parts:
       - etckeeper
     organize:
       scripts: bin
-    # filesets:
-    #   binaries:
-    #     - bin/*
-    #     - usr/bin/*
-    # stage:
-    #   - $binaries
-    # prime:
-    #   - $binaries

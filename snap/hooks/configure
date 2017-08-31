@@ -34,7 +34,7 @@ if [[ ! -z $AVOID_DAILY_AUTOCOMMITS ]]; then
     fi
 fi
 
-AVOID_SPECIAL_FILE_WARNING=$(snapctl get avoid-special-file-handling)
+AVOID_SPECIAL_FILE_WARNING=$(snapctl get avoid-special-file-warning)
 if [[ ! -z $AVOID_SPECIAL_FILE_WARNING ]]; then
     if "$AVOID_SPECIAL_FILE_WARNING" == "1"; then
         SED_EXPR = $SED_EXPR"/^#AVOID_SPECIAL_FILE_WARNING=/ s/^#//;"

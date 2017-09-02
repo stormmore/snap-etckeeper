@@ -14,6 +14,14 @@ confinement: classic # use 'strict' once you have the right plugs and slots
 apps:
   etckeeper:
     command: bin/etckeeper.wrapper
+  git:
+    command: git
+  bzr:
+    command: bzr
+  hg:
+    command: hg
+  darcs:
+    command: darcs
 
 parts:
   etckeeper:
@@ -23,3 +31,23 @@ parts:
       - etckeeper
     organize:
       scripts: bin
+
+  git:
+    plugin: nil
+    stage-packages:
+      - git
+
+  bzr:
+    plugin: nil
+    stage-packages:
+      - bzr
+
+  hg:
+    plugin: nil
+    stage-packages:
+      - mercurial
+
+  darcs:
+    plugin: nil
+    stage-packages:
+      - darcs

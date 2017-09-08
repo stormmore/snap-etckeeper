@@ -43,9 +43,12 @@ parts:
       - bzr
 
   hg:
-    plugin: nil
-    stage-packages:
-      - mercurial
+    plugin: make
+    source: http://mercurial-scm.org/repo/hg-stable
+    source-type: hg
+    source-branch: stable
+    build-packages:
+      - python-dev
 
   darcs:
     plugin: nil

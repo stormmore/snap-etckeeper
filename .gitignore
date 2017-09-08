@@ -14,6 +14,7 @@ Cargo.lock
 target
 *.swp
 *.snap
+*.tar.bz2
 parts
 stage
 prime

@@ -1,11 +1,9 @@
 #!/bin/bash
 
-CONF_FILE=$SNAP_COMMON/etc/etckeeper/etckeeper.conf
-
-# move $SNAP/etc/etckeeper to #SNAP_COMMON/etc/etckeeper
-if [ ! -d $SNAP_COMMON/etc/etckeeper ]; then
-    mkdir -p $SNAP_COMMON/etc/etckeeper
-    cp -r $SNAP/etc/etckeeper $SNAP_COMMON/etc/
+# move $SNAP/etc/etckeeper to /etc/etckeeper
+if [ ! -d /etc/etckeeper ]; then
+    mkdir -p /etc/etckeeper
+    cp -r $SNAP/etc/etckeeper /etc/
 fi
 
 SED_EXPR=""

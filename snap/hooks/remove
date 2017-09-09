@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if [ -d /etc/etckeeper ]; then
+  rm -fr /etc/etckeeper
+fi
